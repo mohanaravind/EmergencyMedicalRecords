@@ -1,25 +1,41 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?><web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.5" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 	<servlet>
-		<servlet-name>EmergencyMedicalRecords</servlet-name>
-		<servlet-class>com.mohanaravind.emr.EmergencyMedicalRecordsServlet</servlet-class>
+		<servlet-name>RegisterUserServlet</servlet-name>
+		<servlet-class>com.mohanaravind.emr.RegisterUserServlet</servlet-class>
 	</servlet>
+	<context-param>
+		<param-name>apiKey</param-name>
+		<param-value>23a2A!0aSdsaAFUpqmvA49()564@3Sv18sA413g</param-value>
+	</context-param>
+	<context-param>
+		<param-name>seedLength</param-name>
+		<param-value>999999</param-value>
+	</context-param>	
+	<context-param>
+		<param-name>adjective</param-name>
+		<param-value>adorable,adventurous,aggressive,alert,amused,angry,anxious,attractive,beautiful,blue,brainy,brave,breakable,busy,calm,careful,charming,clumsy,colorful,combative,confused,crazy,dangerous,dark,delightful,difficult,distinct,doubtful,elated,embarrassed,enthusiastic,excited,expensive,fair,faithful,fine,friendly,funny,gentle,good,gorgeous,handsome,healthy,happy,hungry,important,innocent,kind,lazy,lovely,lucky,modern,mysterious,naughty,nice,open,perfect,plain,poor,real,rich,scary,selfish,sore,stupid,successful,talented,tense,ugly,tough,thoughtful,vast,unusual,wild,wrong</param-value>
+	</context-param>
+	<context-param>
+		<param-name>noun</param-name>
+		<param-value>age,air,anger,animal,answer,apple,area,arm,art,atom,baby,back,ball,band,bank,bar,base,bat,bear,beauty,bell,bird,bit,block,blood,blow,board,boat,body,bone,book,bottom,box,boy,branch,bread,break,brother,call,camp,capital,captain,car,card,care,case,cat,cause,cell,cent,century,chair,chance,change,character,chick,chief,child,children,chord,circle,city,class,climb,clock,cloud,coast,coat,cold,colony,color,column,corn,course,cow,crowd,dad,current,danger,day,deal,degree,design,division,doctor,dog,dollar,door,draw,dream,dress,drive,drop,duck,ear,earth,effect,egg,end,enemy,energy</param-value>
+	</context-param>
 	<servlet-mapping>
-		<servlet-name>EmergencyMedicalRecords</servlet-name>
-		<url-pattern>/emergencymedicalrecords</url-pattern>
+		<servlet-name>RegisterUserServlet</servlet-name>
+		<url-pattern>/registeruserservlet</url-pattern>
 	</servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
- <servlet>
-  <servlet-name>SystemServiceServlet</servlet-name>
-  <servlet-class>com.google.api.server.spi.SystemServiceServlet</servlet-class>
-  <init-param>
-   <param-name>services</param-name>
-   <param-value/>
-  </init-param>
- </servlet>
- <servlet-mapping>
-  <servlet-name>SystemServiceServlet</servlet-name>
-  <url-pattern>/_ah/spi/*</url-pattern>
- </servlet-mapping>
+	<servlet>
+		<servlet-name>SystemServiceServlet</servlet-name>
+		<servlet-class>com.google.api.server.spi.SystemServiceServlet</servlet-class>
+		<init-param>
+			<param-name>services</param-name>
+			<param-value/>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SystemServiceServlet</servlet-name>
+		<url-pattern>/_ah/spi/*</url-pattern>
+	</servlet-mapping>
 </web-app>
