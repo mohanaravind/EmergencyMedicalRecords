@@ -2,10 +2,13 @@ package com.mohanaravind.emr;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 import java.util.Random;
 
 import javax.servlet.http.*;
 
+import com.mohanaravind.entity.UserData;
+import com.mohanaravind.utility.DBHandler;
 import com.mohanaravind.utility.TokenFactory;
 
 @SuppressWarnings("serial")
@@ -43,22 +46,94 @@ public class RegisterUserServlet extends HttpServlet {
 	 */
 	private void sendResponse(HttpServletResponse resp) throws IOException {
 		PrintWriter out = resp.getWriter();
+		String response = "Error";
 		
 		//Get the required stuffs
 		passPhrase = generatePassPhrase();
 		token = generateToken(phoneNumber, deviceId, passPhrase);
-				
-		out.println('{');
-				
-		out.println(" 'Token' :'" + token + "', 'PassPhrase' : '" + passPhrase + "'");
 		
-		out.println('}');
+		//If the data was successfully persisted
+		if(persistData())
+			response = buildResponse();
+		
+		//Push the response
+		out.println(response);
 		out.flush();
 		
 		resp.setContentType("application/JSON");
+		
 	}
 	
 	
+	/**
+	 * Persists the data to Google data store
+	 * @return
+	 */
+	private Boolean persistData() {
+		Boolean result = false;		
+		
+		try{
+			Date date = new Date();
+			UserData userData = new UserData();
+			
+			//Set the attributes
+			userData.setCreatedOn(date.toString());
+			userData.setDeviceId(this.deviceId);
+			userData.setIsTokenActive(true);
+			userData.setPassPhrase(this.passPhrase);
+			userData.setPhoneNumber(this.phoneNumber);
+			userData.setSeed(this.seed);
+			userData.setToken(this.token);
+			
+			//Persist the data onto google data store
+			DBHandler dbHandler = new DBHandler();
+			result = dbHandler.storeData(userData);						
+		}catch(Exception ex){
+			result = false;
+		}
+		
+		
+		return result;
+	}
+
+	/**
+	 * Builds the JSON response
+	 * @return
+	 */
+	private String buildResponse(){
+		//Declarations
+		StringBuilder response = new StringBuilder();
+		
+		response.append("{");
+		
+		//Add the token
+		response.append("'Token':");
+		response.append("'");
+		response.append(this.token);
+		response.append("'");
+		
+		response.append(",");
+		
+		//Add the pass phrase
+		response.append("'PassPhrase':");
+		response.append("'");
+		response.append(this.passPhrase);		
+		response.append("'");
+				
+		response.append(",");
+		
+		//Add the seed 
+		response.append("'Seed':");
+		response.append("'");
+		response.append(this.seed);		
+		response.append("'");
+
+		response.append("}");
+		
+		return response.toString();
+	}
+	
+
 	/**
 	 * Generates the token and returns the string
 	 * @param phoneNumber
