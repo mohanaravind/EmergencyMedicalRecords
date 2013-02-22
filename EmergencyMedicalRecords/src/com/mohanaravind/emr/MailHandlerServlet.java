@@ -58,9 +58,7 @@ public class MailHandlerServlet extends HttpServlet {
 			//Persist the mail data
 			DBHandler dbHandler = new DBHandler();
 			dbHandler.storeData(mailData);
-			
-			//Log the information
-			log.info("An email was received from " + addresses[0].toString());						
+									
 		} catch (Exception e) {			
 			log.severe("doPost: " + e.getMessage());
 		}
