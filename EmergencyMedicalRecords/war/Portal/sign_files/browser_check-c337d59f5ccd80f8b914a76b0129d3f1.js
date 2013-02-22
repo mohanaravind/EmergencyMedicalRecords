@@ -1,0 +1,1 @@
+(function(){if(Modernizr.ie8||Modernizr.ie7||Modernizr.ie6||Modernizr.ff3)window.location="/login/unsupported"}).call(this);

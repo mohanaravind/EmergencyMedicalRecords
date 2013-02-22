@@ -19,6 +19,7 @@ public class UserData implements IStoreableData{
 	 */
 	private String phoneNumber;
 	private String deviceId;
+	private String emailId;
 	private String token;
 	private String createdOn;
 	private Integer seed;
@@ -32,6 +33,7 @@ public class UserData implements IStoreableData{
 	 */
 	public String getPhoneNumber() { return this.phoneNumber;}
 	public String getDeviceId() { return this.deviceId;}
+	public String getEmailId() { return this.emailId;};
 	public String getToken() { return this.token;};
 	public String getCreatedOn() { return this.createdOn;};
 	public Integer getSeed() { return this.seed;};
@@ -39,8 +41,10 @@ public class UserData implements IStoreableData{
 	public boolean getIsTokenActive() { return this.isTokenActive;};
 	
 	
+	
 	public void setPhoneNumber(String phoneNumber){ this.phoneNumber = phoneNumber;}
 	public void setDeviceId(String deviceId){ this.deviceId = deviceId;}
+	public void setEmailId(String emailId){ this.emailId = emailId;}
 	public void setToken(String token){ this.token = token;}
 	public void setCreatedOn(String createdOn){ this.createdOn = createdOn;}
 	public void setSeed(Integer seed){ this.seed = seed;}
@@ -57,6 +61,7 @@ public class UserData implements IStoreableData{
 		//Set the entity properties
 		entity.setProperty("phoneNumber", this.phoneNumber);
 		entity.setProperty("deviceId", this.deviceId);
+		entity.setProperty("emailId", this.emailId);
 		entity.setProperty("token", this.token);
 		entity.setProperty("createdOn", this.createdOn);
 		entity.setProperty("passPhrase", this.passPhrase);
@@ -77,6 +82,7 @@ public class UserData implements IStoreableData{
 			this.phoneNumber = entity.getProperty("phoneNumber").toString();
 			
 			this.deviceId = entity.getProperty("deviceId").toString();
+			this.emailId = entity.getProperty("emailId").toString();
 			this.token = entity.getProperty("token").toString();
 			this.createdOn = entity.getProperty("createdOn").toString();
 			this.passPhrase = entity.getProperty("passPhrase").toString();

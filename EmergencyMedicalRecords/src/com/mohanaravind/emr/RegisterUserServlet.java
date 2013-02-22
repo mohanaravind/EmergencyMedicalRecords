@@ -9,6 +9,7 @@ import javax.servlet.http.*;
 
 import com.mohanaravind.entity.UserData;
 import com.mohanaravind.utility.DBHandler;
+import com.mohanaravind.utility.EmailHandler;
 import com.mohanaravind.utility.TokenFactory;
 
 @SuppressWarnings("serial")
@@ -16,6 +17,7 @@ public class RegisterUserServlet extends HttpServlet {
 	
 	
 	private String deviceId;
+	private String emailId;
 	private String phoneNumber;
 	private String apiKey;
 	
@@ -31,12 +33,60 @@ public class RegisterUserServlet extends HttpServlet {
 		//Get the inputs
 		retrieveInputs(req);
 		
-		if(!isAuthorizedRequest){
+		//If the request was not an authorized request
+		if(!this.isAuthorizedRequest){
 			resp.getWriter().println("You are not authorized for this service!");
 			return;
 		}
-		
+			
+		//Send the response back
 		sendResponse(resp);
+		
+		//Send the notification mail
+		sendNotificationMail();
+	}
+
+
+	/**
+	 * Sends the notification mail to the newly registering user
+	 * @author Aravind
+	 */
+	private void sendNotificationMail() {
+		//Declarations
+		String senderId = getServletContext().getInitParameter("notifierId");
+		String senderName = getServletContext().getInitParameter("notifierName");
+		String subject = getServletContext().getInitParameter("userRegistrationSubject");
+		
+		//Create the email handler
+		EmailHandler emailHandler = EmailHandler.getEmailHandler(senderId, senderName);		
+		
+		//Get the message body
+		String messageBody = getMessageBody();
+		
+		//Send the mail
+		emailHandler.sendMail(this.emailId, this.phoneNumber, subject, messageBody);				
+	}
+	
+	/**
+	 * Creates the message body for the notification mail
+	 * @return
+	 */
+	private String getMessageBody(){
+		StringBuilder messageBody = new StringBuilder();
+		
+		messageBody.append("Hi,");
+		messageBody.append("\n");
+		messageBody.append("Welcome to Emergency Response System.");
+		messageBody.append("\n");
+		messageBody.append("Your passphrase is:");
+		messageBody.append("\n");
+		messageBody.append(passPhrase);
+		messageBody.append("\n\n");
+		messageBody.append("Thanks,");
+		messageBody.append("\n");
+		messageBody.append("ERS Team");
+				
+		return messageBody.toString();
 	}
 
 
@@ -84,6 +134,7 @@ public class RegisterUserServlet extends HttpServlet {
 			userData.setPhoneNumber(this.phoneNumber);
 			userData.setSeed(this.seed);
 			userData.setToken(this.token);
+			userData.setEmailId(this.emailId);
 			
 			//Persist the data onto google data store
 			DBHandler dbHandler = new DBHandler();
@@ -98,6 +149,8 @@ public class RegisterUserServlet extends HttpServlet {
 
 	/**
 	 * Builds the JSON response
+	 * Sample JSON format
+	 * {'Token':'4564','PassPhrase':'enthusiastic bank','Seed':'54247', 'Result':'OK'}
 	 * @return
 	 */
 	private String buildResponse(){
@@ -127,6 +180,15 @@ public class RegisterUserServlet extends HttpServlet {
 		response.append("'");
 		response.append(this.seed);		
 		response.append("'");
+		
+		response.append(",");
+		
+		//Add the seed 
+		response.append("'Result':");
+		response.append("'");
+		response.append("OK");		
+		response.append("'");
+		
 
 		response.append("}");
 		
@@ -167,6 +229,7 @@ public class RegisterUserServlet extends HttpServlet {
 	
 	
 	/***
+	
 	 * Retrieves the inputs which were passed 
 	 */
 	private void retrieveInputs(HttpServletRequest req){
@@ -182,6 +245,7 @@ public class RegisterUserServlet extends HttpServlet {
 				this.isAuthorizedRequest = true;
 				this.deviceId = req.getParameter("deviceId");
 				this.phoneNumber = req.getParameter("phoneNumber");
+				this.emailId = req.getParameter("emailId");
 			}else			
 				this.isAuthorizedRequest = false;
 		} catch (Exception e) {

@@ -4,13 +4,29 @@
 		<servlet-class>com.mohanaravind.emr.RegisterUserServlet</servlet-class>
 	</servlet>
 	<context-param>
+		<param-name>userRegistrationSubject</param-name>
+		<param-value>Your account has been verified by Emergency Response System</param-value>
+	</context-param>
+	<context-param>
+		<param-name>notifierId</param-name>
+		<param-value>notification@emergencymedicalrecords.appspotmail.com</param-value>
+	</context-param>
+	<context-param>
+		<param-name>notifierName</param-name>
+		<param-value>Emergency Response System</param-value>
+	</context-param>
+	<context-param>
+		<param-name>adminName</param-name>
+		<param-value>Administrator</param-value>
+	</context-param>
+	<context-param>
 		<param-name>apiKey</param-name>
 		<param-value>23a2A!0aSdsaAFUpqmvA49()564@3Sv18sA413g</param-value>
 	</context-param>
 	<context-param>
 		<param-name>seedLength</param-name>
 		<param-value>999999</param-value>
-	</context-param>	
+	</context-param>
 	<context-param>
 		<param-name>adjective</param-name>
 		<param-value>adorable,adventurous,aggressive,alert,amused,angry,anxious,attractive,beautiful,blue,brainy,brave,breakable,busy,calm,careful,charming,clumsy,colorful,combative,confused,crazy,dangerous,dark,delightful,difficult,distinct,doubtful,elated,embarrassed,enthusiastic,excited,expensive,fair,faithful,fine,friendly,funny,gentle,good,gorgeous,handsome,healthy,happy,hungry,important,innocent,kind,lazy,lovely,lucky,modern,mysterious,naughty,nice,open,perfect,plain,poor,real,rich,scary,selfish,sore,stupid,successful,talented,tense,ugly,tough,thoughtful,vast,unusual,wild,wrong</param-value>
@@ -38,4 +54,24 @@
 		<servlet-name>SystemServiceServlet</servlet-name>
 		<url-pattern>/_ah/spi/*</url-pattern>
 	</servlet-mapping>
+
+	<!-- Email Handler configurations -->
+	<servlet>
+		<servlet-name>mailhandler</servlet-name>
+		<servlet-class>com.mohanaravind.emr.MailHandlerServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>mailhandler</servlet-name>
+		<url-pattern>/_ah/mail/*</url-pattern>
+	</servlet-mapping>
+	<security-constraint>
+		<web-resource-collection>
+			<url-pattern>/_ah/mail/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>admin</role-name>
+		</auth-constraint>
+	</security-constraint>
+
+
 </web-app>
