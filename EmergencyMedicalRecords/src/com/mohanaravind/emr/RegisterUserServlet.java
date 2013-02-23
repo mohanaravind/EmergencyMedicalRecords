@@ -23,7 +23,7 @@ public class RegisterUserServlet extends HttpServlet {
 	
 	private String token;
 	private String passPhrase;
-	private Integer seed;
+	private String seed;
 	
 	private boolean isAuthorizedRequest;
 	
@@ -100,7 +100,7 @@ public class RegisterUserServlet extends HttpServlet {
 		
 		//Get the required stuffs
 		passPhrase = generatePassPhrase();
-		token = generateToken(phoneNumber, deviceId, passPhrase);
+		token = generateToken(this.phoneNumber, this.deviceId, this.passPhrase, this.emailId);
 		
 		//If the data was successfully persisted
 		if(persistData())
@@ -203,10 +203,11 @@ public class RegisterUserServlet extends HttpServlet {
 	 * @param passPhrase
 	 * @return
 	 */
-	private String generateToken(String phoneNumber, String deviceId, String passPhrase){
+	private String generateToken(String phoneNumber, String deviceId, String passPhrase, String emailId){
 		String tokenized = null;
 		Random random = new Random();
 		Integer seedLength;
+		
 		
 		try {
 			
@@ -214,9 +215,9 @@ public class RegisterUserServlet extends HttpServlet {
 			seedLength = Integer.parseInt(getServletContext().getInitParameter("seedLength"));
 			
 			//Get the random seed
-			this.seed = random.nextInt(seedLength);
+			this.seed = String.valueOf(random.nextInt(seedLength));
 			
-			TokenFactory tokenFactory = new TokenFactory(phoneNumber, deviceId, passPhrase, this.seed);		
+			TokenFactory tokenFactory = new TokenFactory(phoneNumber, deviceId, passPhrase, this.seed, emailId);		
 			Integer token = tokenFactory.generateToken();
 			
 			tokenized = token.toString();

@@ -22,7 +22,7 @@ public class UserData implements IStoreableData{
 	private String emailId;
 	private String token;
 	private String createdOn;
-	private Integer seed;
+	private String seed;
 	private String passPhrase;
 	private boolean isTokenActive;
 	
@@ -36,7 +36,7 @@ public class UserData implements IStoreableData{
 	public String getEmailId() { return this.emailId;};
 	public String getToken() { return this.token;};
 	public String getCreatedOn() { return this.createdOn;};
-	public Integer getSeed() { return this.seed;};
+	public String getSeed() { return this.seed;};
 	public String getPassPhrase() { return this.passPhrase;};
 	public boolean getIsTokenActive() { return this.isTokenActive;};
 	
@@ -47,7 +47,7 @@ public class UserData implements IStoreableData{
 	public void setEmailId(String emailId){ this.emailId = emailId;}
 	public void setToken(String token){ this.token = token;}
 	public void setCreatedOn(String createdOn){ this.createdOn = createdOn;}
-	public void setSeed(Integer seed){ this.seed = seed;}
+	public void setSeed(String seed){ this.seed = seed;}
 	public void setPassPhrase(String passPhrase){ this.passPhrase = passPhrase;}
 	public void setIsTokenActive(boolean isTokenActive){ this.isTokenActive = isTokenActive;}
 	
@@ -87,7 +87,7 @@ public class UserData implements IStoreableData{
 			this.createdOn = entity.getProperty("createdOn").toString();
 			this.passPhrase = entity.getProperty("passPhrase").toString();
 			this.isTokenActive = Boolean.getBoolean(entity.getProperty("isTokenActive").toString());		
-			this.seed = Integer.getInteger(entity.getProperty("seed").toString());
+			this.seed = entity.getProperty("seed").toString();
 		}	
 		
 		return this;
