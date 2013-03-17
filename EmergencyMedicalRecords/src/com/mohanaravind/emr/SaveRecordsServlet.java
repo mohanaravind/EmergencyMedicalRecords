@@ -21,7 +21,7 @@ public class SaveRecordsServlet extends HttpServlet {
 
 	private String _userId;
 	private MedicalData _medicalData;
-
+	private String _tabMarker;
 
 	private static final Logger _log = Logger.getLogger(SignInServlet.class.getName()); 
 
@@ -81,9 +81,10 @@ public class SaveRecordsServlet extends HttpServlet {
 		Boolean persisted = persistRecords();
 		
 		//Send back the response
-		//Pass on the user id	
+		//Pass on the user id and other data
 		req.setAttribute("userId", _userId);
 		req.setAttribute("saved", persisted);
+		req.setAttribute("tabMarker", _tabMarker);
 		
 		//Forward the request to the records page
 		try {
@@ -146,8 +147,8 @@ public class SaveRecordsServlet extends HttpServlet {
 			_medicalData.setEmergencyContact1Phone(req.getParameter("emergencycontact_1_phone1").trim() + "," + 
 					  					           req.getParameter("emergencycontact_1_phone2").trim() + "," + 
 					                               req.getParameter("emergencycontact_1_phone3").trim() );
-			_medicalData.setEmergencyContact1(req.getParameter("emergencycontact_name2").trim());
-			_medicalData.setEmergencyContact1Phone(req.getParameter("emergencycontact_2_phone1").trim() + "," + 
+			_medicalData.setEmergencyContact2(req.getParameter("emergencycontact_name2").trim());
+			_medicalData.setEmergencyContact2Phone(req.getParameter("emergencycontact_2_phone1").trim() + "," + 
 					  					           req.getParameter("emergencycontact_2_phone2").trim() + "," + 
 					                               req.getParameter("emergencycontact_2_phone3").trim() );
 			
@@ -167,6 +168,9 @@ public class SaveRecordsServlet extends HttpServlet {
 			_medicalData.setChestNotes(req.getParameter("chest_notes").trim());
 			_medicalData.setArmsNotes(req.getParameter("arms_notes").trim());
 			_medicalData.setLegsNotes(req.getParameter("legs_notes").trim());
+			
+			//Get the tab marker
+			_tabMarker = req.getParameter("tabMarker");
 			
 		} catch (Exception e) {
 			_log.warning(e.getMessage());

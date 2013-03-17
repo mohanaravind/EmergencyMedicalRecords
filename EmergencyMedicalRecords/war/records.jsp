@@ -1,6 +1,9 @@
+<%@page import="com.mohanaravind.entity.MedicalData"%>
 <%@page import="com.mohanaravind.utility.DBHandler"%>
 <%@page import="com.mohanaravind.entity.UserData"%>
+<%@page import="com.mohanaravind.worker.*"%>
 <%@page import="com.google.appengine.api.users.User"%>
+
 
 
 
@@ -22,8 +25,19 @@
 <script>
 	$(function() {
 		$("#tabs").tabs();
+		
+		//Select the marked tab
+		var tabMarker = '<%=request.getAttribute("tabMarker")%>';		
+		
+		if(tabMarker != null)
+			$("#" + tabMarker).trigger('click');
+			//$("li[aria-labelledby=" + tabMarker + "]").trigger('click');
 
 		$("li[role='tab']").click(function() {
+			//store the id of the tab which was clicked
+		    //$("#tabMarker").attr("value", $(this).attr('aria-labelledby'));
+			$("#tabMarker").attr("value", $(this).children("a").attr("id"));
+			
 			//Get the body part which was clicked
 			var part = $(this).children("a").html().toLowerCase();
 
@@ -34,7 +48,7 @@
 		//Display saved successfully message
 		var savedSucessfully = false;
 
-		savedSucessfully = <%=request.getAttribute("saved")%>;
+		savedSucessfully =  <%=request.getAttribute("saved")%>;
 
 		if (savedSucessfully)
 			displaydialog();
@@ -69,6 +83,12 @@ body {
 <body class="kubepage">
 
 
+	<%! 
+	    MedicalData medicalData = new MedicalData(); 	    
+	    Worker worker = new Worker();
+	    String[] personalDateOfBirth;	
+	%>
+	
 
 	<%
 		String userName = "";
@@ -98,6 +118,18 @@ body {
 
 			User user = new User(userData.getEmailId(), "gmail.com");
 			userName = user.getNickname();
+			
+			//Get the medical data
+			medicalData = (MedicalData)dbHandler.getData(userId, medicalData);
+			
+			String[] emptyData = new String[3];
+			emptyData[0] = "";
+			emptyData[1] = "";
+			emptyData[2] = "";
+			
+			//Get the details
+			personalDateOfBirth = medicalData.getPersonalDateOfBirth().split(",");
+			
 
 		} catch (Exception ex) {
 			response.sendRedirect("sign.jsp?error=unableToRetrieveUserData");
@@ -155,6 +187,8 @@ body {
 
 							<div id="tabs">
 								<form method="post" action="/saverecordsservlet">
+									<input id="tabMarker" name="tabMarker" type="text" value="ui-id-1" style="display:none;">
+								
 									<ul>
 										<li><a href="#tabs-1">General</a></li>
 										<li><a href="#tabs-2">Head</a></li>
@@ -169,31 +203,40 @@ body {
 												<ul>
 													<li class="form-section">Personal Contact</li>
 													<li><label for="foo">Name </label> <input type="text"
-														name="personalcontact_name" id="foo"></li>
+														name="personalcontact_name" id="foo" 
+														value=<%= medicalData.getPersonalName() %>														
+														></li>
 													<li>
 														<fieldset>
 															<section>
 																<label>Address</label>
 															</section>
 															<textarea name="personalcontact_address" class="width-50"
-																style="height: 50px;"></textarea>
+																style="height: 50px;"><%= medicalData.getPersonalAddress()%></textarea>																												
+																
+																
 														</fieldset>
 													</li>
 													<li><label for="foo">Phone number</label> ( <input
 														type="text" name="personalcontact_phonenumber1" id="foo"
-														size="3"> ) <input type="text"
-														name="personalcontact_phonenumber2" id="foo" size="3">
+														size="3" value=<%= worker.getPhoneNumber(medicalData.getPersonalPhone(), Worker.Part.first)  %>	> ) <input type="text"
+														name="personalcontact_phonenumber2" id="foo" size="3" value=<%= worker.getPhoneNumber(medicalData.getPersonalPhone(), Worker.Part.second)  %> >
 														- <input type="text" name="personalcontact_phonenumber3"
-														id="foo" size="3">
+														id="foo" size="3" value=<%= worker.getPhoneNumber(medicalData.getPersonalPhone(), Worker.Part.third)  %> >
 													<li>
 														<fieldset>
 															<section>Date of Birth</section>
 															<ul class="multicolumn">
-																<li><select name="personalcontact_month"><option>---</option></select>
+																<li><select name="personalcontact_month"><%= worker.getMonthOptions(personalDateOfBirth[0])  %>	
+																	</select>
 																	<div class="descr">Month</div></li>
-																<li><select name="personalcontact_day"><option>---</option></select>
+																<li><select name="personalcontact_day">
+																      <%= worker.getOptions(1, 32, personalDateOfBirth[1])  %>								      																		       																
+																</select>
 																	<div class="descr">Day</div></li>
-																<li><select name="personalcontact_year"><option>---</option></select>
+																<li><select name="personalcontact_year">
+																 	<%= worker.getOptions(1920, 2010, personalDateOfBirth[2])  %>																	
+																</select>
 																	<div class="descr">Year</div></li>
 															</ul>
 														</fieldset>
@@ -201,38 +244,38 @@ body {
 													<li class="form-section">Emergency Contact</li>
 
 													<li><label for="foo">Contact 1</label> <input
-														type="text" name="emergencycontact_name1" id="foo"></li>
+														type="text" name="emergencycontact_name1" id="foo" value=<%= medicalData.getEmergencyContact1() %> ></li>
 													<li><label for="foo">Phone number</label> ( <input
 														type="text" name="emergencycontact_1_phone1" id="foo"
-														size="3"> ) <input type="text"
-														name="emergencycontact_1_phone2" id="foo" size="3">
+														size="3" value=<%= worker.getPhoneNumber(medicalData.getEmergencyContact1Phone(), Worker.Part.first)  %>> ) <input type="text"
+														name="emergencycontact_1_phone2" id="foo" size="3" value=<%= worker.getPhoneNumber(medicalData.getEmergencyContact1Phone(), Worker.Part.second)  %>>
 														- <input type="text" name="emergencycontact_1_phone3"
-														id="foo" size="3">
+														id="foo" size="3" value=<%= worker.getPhoneNumber(medicalData.getEmergencyContact1Phone(), Worker.Part.third)  %> >
 													<li>
 													<li><label for="foo">Contact 2</label> <input
-														type="text" name="emergencycontact_name2" id="foo"></li>
+														type="text" name="emergencycontact_name2" id="foo" value=<%= medicalData.getEmergencyContact2() %> ></li>
 													<li><label for="foo">Phone number</label> ( <input
 														type="text" name="emergencycontact_2_phone1" id="foo"
-														size="3"> ) <input type="text"
-														name="emergencycontact_2_phone2" id="foo" size="3">
+														size="3" value=<%= worker.getPhoneNumber(medicalData.getEmergencyContact2Phone(), Worker.Part.first)  %> > ) <input type="text"
+														name="emergencycontact_2_phone2" id="foo" size="3"  value=<%= worker.getPhoneNumber(medicalData.getEmergencyContact2Phone(), Worker.Part.second)  %> >
 														- <input type="text" name="emergencycontact_2_phone3"
-														id="foo" size="3">
+														id="foo" size="3" value=<%= worker.getPhoneNumber(medicalData.getEmergencyContact2Phone(), Worker.Part.third)  %> >
 													<li>
 													<li class="form-section">Provider Information</li>
 
 													<li><label for="foo">Primary care</label> <input
-														type="text" name="emergencycontact_care" id="foo"></li>
+														type="text" name="emergencycontact_care" id="foo" value=<%= medicalData.getPrimaryCare() %> ></li>
 													<li><label for="foo">Phone number</label> ( <input
 														type="text" name="emergencycontact_care_phone1" id="foo"
-														size="3"> ) <input type="text"
-														name="emergencycontact_care_phone2" id="foo" size="3">
+														size="3" value=<%= worker.getPhoneNumber(medicalData.getPrimaryCarePhone(), Worker.Part.first)  %> > ) <input type="text"
+														name="emergencycontact_care_phone2" id="foo" size="3" value=<%= worker.getPhoneNumber(medicalData.getPrimaryCarePhone(), Worker.Part.first)  %> >
 														- <input type="text" name="emergencycontact_care_phone3"
-														id="foo" size="3">
+														id="foo" size="3" value=<%= worker.getPhoneNumber(medicalData.getPrimaryCarePhone(), Worker.Part.third)  %> >
 													<li>
 													<li><label for="foo">Insurance</label> <input
-														type="text" name="emergencycontact_insurance" id="foo"></li>
+														type="text" name="emergencycontact_insurance" id="foo" value=<%= medicalData.getInsurance() %> ></li>
 													<li><label for="foo">Insurance ID</label> <input
-														type="text" name="emergencycontact_insuranceid" id="foo"></li>
+														type="text" name="emergencycontact_insuranceid" id="foo" value=<%= medicalData.getInsuranceId() %>	></li>
 
 													<li class="form-section">Conditions</li>
 													<li>
@@ -241,7 +284,7 @@ body {
 																<label>Medications</label>
 															</section>
 															<textarea name="emergencycontact_medications"
-																class="width-50" style="height: 50px;"></textarea>
+																class="width-50" style="height: 50px;"><%= medicalData.getMedicalCondition()%></textarea>
 
 														</fieldset>
 													</li>
@@ -251,7 +294,7 @@ body {
 																<label>Allergies</label>
 															</section>
 															<textarea name="emergencycontact_allergies"
-																class="width-50" style="height: 50px;"></textarea>
+																class="width-50" style="height: 50px;"><%= medicalData.getAllergies()%></textarea>
 														</fieldset>
 													</li>
 													<li>
@@ -260,7 +303,7 @@ body {
 																<label>Special Note</label>
 															</section>
 															<textarea name="emergencycontact_specialnote"
-																class="width-50" style="height: 50px;"></textarea>
+																class="width-50" style="height: 50px;"><%= medicalData.getSpecialNotes()%></textarea>
 														</fieldset>
 													</li>
 
@@ -285,7 +328,7 @@ body {
 																<label>Notes</label>
 															</section>
 															<textarea name="head_notes" class="width-90"
-																style="height: 200px;"></textarea>
+																style="height: 200px;"><%= medicalData.getHeadNotes()%></textarea>
 														</fieldset>
 													</li>
 												</ul>
@@ -309,7 +352,7 @@ body {
 																<label>Notes</label>
 															</section>
 															<textarea name="neck_notes" class="width-90"
-																style="height: 200px;"></textarea>
+																style="height: 200px;"><%= medicalData.getNeckNotes()%></textarea>
 														</fieldset>
 													</li>
 												</ul>
@@ -332,7 +375,7 @@ body {
 																<label>Notes</label>
 															</section>
 															<textarea name="chest_notes" class="width-90"
-																style="height: 200px;"></textarea>
+																style="height: 200px;"><%= medicalData.getChestNotes()%></textarea>
 														</fieldset>
 													</li>
 												</ul>
@@ -354,7 +397,7 @@ body {
 																<label>Notes</label>
 															</section>
 															<textarea name="arms_notes" class="width-90"
-																style="height: 200px;"></textarea>
+																style="height: 200px;"><%= medicalData.getArmsNotes()%></textarea>
 														</fieldset>
 													</li>
 												</ul>
@@ -377,7 +420,7 @@ body {
 																<label>Notes</label>
 															</section>
 															<textarea name="legs_notes" class="width-90"
-																style="height: 200px;"></textarea>
+																style="height: 200px;"><%= medicalData.getLegsNotes()%></textarea>
 														</fieldset>
 													</li>
 												</ul>
