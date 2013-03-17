@@ -60,7 +60,32 @@ public class DBHandler {
 			Query query = new Query(storeKey);
 						
 			List<Entity> datas = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(100));
+								
+			//Fill the data
+			dataToFill = dataToFill.getData(datas);			
+		}catch(Exception ex){			
+			dataToFill = null;
+		}
+		
+		return dataToFill;
+	}
+	
+	/**
+	 * Retrieves the user data from google data store
+	 * @param phoneNumber
+	 * @return
+	 */
+	public IStoreableData  getData(IStoreableData dataToFill){
+
+		try{			
+			//Get the data store
+			DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();						
+						
+			//Get the list of logged in users from the buffHello data						
+			Query query = new Query(dataToFill.getClassName());
 			
+			List<Entity> datas = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(100));
+								
 			//Fill the data
 			dataToFill = dataToFill.getData(datas);			
 		}catch(Exception ex){			

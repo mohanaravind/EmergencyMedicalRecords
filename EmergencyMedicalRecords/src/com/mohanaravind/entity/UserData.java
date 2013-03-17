@@ -17,8 +17,15 @@ public class UserData implements IStoreableData{
 	/**
 	 * Fields
 	 */
+	private String userId;
+	
+	
+	
+	
 	private String phoneNumber;
 	private String deviceId;
+	private String simId;
+	private String countryCode;
 	private String emailId;
 	private String token;
 	private String createdOn;
@@ -27,12 +34,16 @@ public class UserData implements IStoreableData{
 	private boolean isTokenActive;
 	
 	
+	
 	/**
 	 * Accessors
 	 * @return
 	 */
+	public String getUserId() {return userId;}
 	public String getPhoneNumber() { return this.phoneNumber;}
 	public String getDeviceId() { return this.deviceId;}
+	public String getSIMId() { return this.simId;}
+	public String getCountryCode() { return this.countryCode;}
 	public String getEmailId() { return this.emailId;};
 	public String getToken() { return this.token;};
 	public String getCreatedOn() { return this.createdOn;};
@@ -41,9 +52,11 @@ public class UserData implements IStoreableData{
 	public boolean getIsTokenActive() { return this.isTokenActive;};
 	
 	
-	
+	public void setUserId(String value) {userId = value;}
 	public void setPhoneNumber(String phoneNumber){ this.phoneNumber = phoneNumber;}
 	public void setDeviceId(String deviceId){ this.deviceId = deviceId;}
+	public void setSIMId(String simId){ this.simId = simId;}
+	public void setCountryCode(String countryCode){ this.countryCode = countryCode;}
 	public void setEmailId(String emailId){ this.emailId = emailId;}
 	public void setToken(String token){ this.token = token;}
 	public void setCreatedOn(String createdOn){ this.createdOn = createdOn;}
@@ -56,11 +69,14 @@ public class UserData implements IStoreableData{
 	 * @return
 	 */
 	public Entity getEntity(){
-		Entity entity = new Entity(UserData.class.getSimpleName(), this.phoneNumber);
+		Entity entity = new Entity(UserData.class.getSimpleName(), this.userId);
 	
 		//Set the entity properties
+		entity.setProperty("userId", this.userId);
 		entity.setProperty("phoneNumber", this.phoneNumber);
 		entity.setProperty("deviceId", this.deviceId);
+		entity.setProperty("simId", this.simId);
+		entity.setProperty("countryCode", this.countryCode);
 		entity.setProperty("emailId", this.emailId);
 		entity.setProperty("token", this.token);
 		entity.setProperty("createdOn", this.createdOn);
@@ -79,9 +95,13 @@ public class UserData implements IStoreableData{
 		//Get the data
 		for(Entity entity : entities){
 			//Get the records
+			this.userId = entity.getProperty("userId").toString();
+			
 			this.phoneNumber = entity.getProperty("phoneNumber").toString();
 			
 			this.deviceId = entity.getProperty("deviceId").toString();
+			this.simId = entity.getProperty("simId").toString();
+			this.countryCode = entity.getProperty("countryCode").toString();
 			this.emailId = entity.getProperty("emailId").toString();
 			this.token = entity.getProperty("token").toString();
 			this.createdOn = entity.getProperty("createdOn").toString();
