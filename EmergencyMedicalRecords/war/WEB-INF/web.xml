@@ -6,6 +6,11 @@
 	</servlet>
 
 	<servlet>
+		<servlet-name>ForgotServlet</servlet-name>
+		<servlet-class>com.mohanaravind.emr.ForgotServlet</servlet-class>
+	</servlet>
+
+	<servlet>
 		<servlet-name>RegisterUserServlet</servlet-name>
 		<servlet-class>com.mohanaravind.emr.RegisterUserServlet</servlet-class>
 	</servlet>
@@ -73,7 +78,13 @@
 		<servlet-name>SaveRecordsServlet</servlet-name>
 		<url-pattern>/saverecordsservlet</url-pattern>
 	</servlet-mapping>
-
+	<servlet-mapping>
+		<servlet-name>ForgotServlet</servlet-name>
+		<url-pattern>/forgotservlet</url-pattern>
+	</servlet-mapping>
+	
+	
+	
 
 
 	<welcome-file-list>

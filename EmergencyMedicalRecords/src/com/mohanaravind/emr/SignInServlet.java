@@ -158,11 +158,9 @@ public class SignInServlet extends HttpServlet {
 			}
 		
 			//Token check
-			if(!tokenGeneratedBySystem.equals(this.token)){
-				this.token = tokenGeneratedBySystem;
+			if(!tokenGeneratedBySystem.equals(this.token))
 				return;
-			}
-			
+						
 			//Set the flag that the user is authentic
 			this.isAuthenticUser = true;					
 		} catch (Exception e) {

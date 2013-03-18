@@ -113,7 +113,7 @@
 						<ol>
 							<li>
 								<div>
-
+									<h1>SOS</h1>
 									<span class="placeholder_wrapper"><label
 										class="placeholder_label" for="field-s-18">Phone
 											Number</label><input type="phone" value=" " autocapitalize="off"
@@ -187,6 +187,7 @@
 
 					<br>
 					<h3><%= worker.getAttemptsLeft(userId) %></h3>
+					<br><br>
 					<p class="form-help-text">
 						Make sure you are entering the right token which you received.
 						Note that this token is valid only for the number of attempts
@@ -221,8 +222,8 @@
 					</small>
 				</p>
 				<ul class="legal-navigation">
-					<li><small><a href="">Privacy Policy</a></small></li>
-					<li><small><a href="">User Agreement</a></small></li>
+					<li><small><a href="privacy.html">Privacy Policy</a></small></li>
+					<li><small><a href="agreement.html">User Agreement</a></small></li>
 				</ul>
 			</div>
 			<!-- .container -->
