@@ -26,6 +26,10 @@ public class MedicalData implements IStoreableData {
 	public void setPersonalName(String value) {_personalName = value;}
 	public String getPersonalName() {return _personalName;}
 	
+	private String _sex = "";	
+	public void setSex(String value) {_sex = value;}
+	public String getSex() {return _sex;}	
+	
 	private String _personalAddress = "";
 	public void setPersonalAddress(String value) {_personalAddress = value;}
 	public String getPersonalAddress() {return _personalAddress;}
@@ -133,6 +137,7 @@ public class MedicalData implements IStoreableData {
 		entity.setProperty("primaryCare", this._primaryCare);
 		entity.setProperty("personalPhone", this._personalPhone);
 		entity.setProperty("personalName", this._personalName);
+		entity.setProperty("sex", this._sex);
 		entity.setProperty("personalDateOfBirth", this._personalDateOfBirth);
 		entity.setProperty("updatedOn", this._updatedOn);
 		
@@ -201,6 +206,9 @@ public class MedicalData implements IStoreableData {
 			
 			if(entity.getProperty("personalName")!= null)
 				this._personalName = entity.getProperty("personalName").toString();
+			
+			if(entity.getProperty("sex")!= null)
+				this._sex = entity.getProperty("sex").toString();
 			
 			if(entity.getProperty("personalDateOfBirth")!= null)
 				this._personalDateOfBirth = entity.getProperty("personalDateOfBirth").toString();

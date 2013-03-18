@@ -135,6 +135,7 @@ public class SaveRecordsServlet extends HttpServlet {
 			_medicalData.setUserId(_userId);
 			
 			_medicalData.setPersonalName(req.getParameter("personalcontact_name").trim());
+			_medicalData.setSex(req.getParameter("personalcontact_sex").trim());
 			_medicalData.setPersonalAddress(req.getParameter("personalcontact_address").trim());			
 			_medicalData.setPersonalPhone(req.getParameter("personalcontact_phonenumber1").trim() + "," + 
 										  req.getParameter("personalcontact_phonenumber2").trim() + "," + 

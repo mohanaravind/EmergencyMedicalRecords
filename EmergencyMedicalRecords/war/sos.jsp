@@ -1,4 +1,5 @@
 <%@ page import="com.mohanaravind.utility.*"%>
+<%@ page import="com.mohanaravind.worker.*"%>
 <%@ page import="com.mohanaravind.entity.*"%>
 
 <!DOCTYPE html>
@@ -28,11 +29,28 @@
 	padding: 0px;
 	padding-top: 5px;
 }
+
+
+
 </style>
+
 
 
 </head>
 <body>
+
+	<% 	Worker worker = new Worker(); String userId = ""; %>
+
+	<%
+		try {
+			//Get the userId
+			userId = (String) request.getAttribute("userId");
+
+		} catch (Exception ex) {
+			//TODO:
+		}
+	%>
+
 	<div class="page">
 
 
@@ -57,8 +75,8 @@
 				<nav class="user-navigation" role="navigation">
 					<div class="container go-wide">
 						<ul>							
-							<li><a href="/sos.jsp">SOS</a></li>
-							<li><a href="/sign.jsp" class="active" style="color:#0167d8">Sign In</a></li>
+							<li><a href="/sos.jsp" class="active" style="color:#0167d8">SOS</a></li>
+							<li><a href="/sign.jsp">Sign In</a></li>
 							<li><a href="#">Help</a></li>
 						</ul>
 					</div>
@@ -80,7 +98,7 @@
 
 			<div class="container">
 				<div class="content-primary">
-					<form accept-charset="UTF-8" action="/signinservlet"
+					<form accept-charset="UTF-8" action="/signinservlet?isSOS=true"
 						class="new_user" id="new_user" method="post"
 						novalidate="novalidate">
 
@@ -142,12 +160,8 @@
 
 							</li>
 							<li><span class="placeholder_wrapper"><label
-									class="placeholder_label" for="field-s-19">Passphrase</label><input
-									class="placeholder_input" id="field-s-19" name="passPhrase"
-									size="30" type="password"></span></li>
-							<li><span class="placeholder_wrapper"><label
-									class="placeholder_label" for="field-s-20">Token from
-										phone</label><input class="placeholder_input" id="field-s-20"
+									class="placeholder_label" for="field-s-20">Key from
+										SOS message</label><input class="placeholder_input" id="field-s-20"
 									name="token" size="30" type="password"></span></li>
 							<li class="checkbox"><label> <input
 									name="user[remember_me]" type="hidden" value="0"><input
@@ -161,32 +175,23 @@
 
 							<input id="redirect_to" name="redirect_to" type="hidden">
 							<p>
-								<button class="button primary large" type="submit">Sign
-									in to ERS</button>
+								<button class="button primary large" type="submit">SOS</button>
 							</p>
 						</div>
 					</form>
 
-					<ul class="form-help-text">
-						<li><a href="">Forgot your passphrase?</a></li>
-						<li><a href="">Didn't receive the passphrase?</a></li>
-					</ul>
 
 				</div>
 				<div class="content-secondary">
 					<div class="divider"></div>
-					<h3>Download Android App</h3>
-					<ul class="sign-in">
-						<li><a
-							href="https://play.google.com/store/apps/details?id=com.mohanaravind.colorpicker#?t=W251bGwsMSwxLDIxMiwiY29tLm1vaGFuYXJhdmluZC5jb2xvcnBpY2tlciJd"><img
-								src="sign_files/play.png" /></span></a></li>
 
-					</ul>
-					<h3>Trouble signing in?</h3>
+					<br>
+					<h3><%= worker.getAttemptsLeft(userId) %></h3>
 					<p class="form-help-text">
-						Make sure you are entering the same passphrase which you got while
-						verifiying. Also check whether the clock in your phone is showing
-						the right time. <br> Read more at <a href="">How it works</a>
+						Make sure you are entering the right token which you received.
+						Note that this token is valid only for the number of attempts
+						which are displayed above. <br> Read more at <a href="">How
+							it works</a>
 					</p>
 
 				</div>
@@ -229,7 +234,6 @@
 	</script>
 	<script src="sign_files/kenobi-70cd47d8c508f416e516f7847d8fe120.js"
 		type="text/javascript"></script>
-
 
 
 

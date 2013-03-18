@@ -31,7 +31,7 @@ public class UserData implements IStoreableData{
 	private String createdOn;
 	private String seed;
 	private String passPhrase;
-	private boolean isTokenActive;
+	private String attemptsLeft;
 	
 	
 	
@@ -49,7 +49,7 @@ public class UserData implements IStoreableData{
 	public String getCreatedOn() { return this.createdOn;};
 	public String getSeed() { return this.seed;};
 	public String getPassPhrase() { return this.passPhrase;};
-	public boolean getIsTokenActive() { return this.isTokenActive;};
+	public String getAttemptsLeft() { return this.attemptsLeft;};
 	
 	
 	public void setUserId(String value) {userId = value;}
@@ -62,7 +62,7 @@ public class UserData implements IStoreableData{
 	public void setCreatedOn(String createdOn){ this.createdOn = createdOn;}
 	public void setSeed(String seed){ this.seed = seed;}
 	public void setPassPhrase(String passPhrase){ this.passPhrase = passPhrase;}
-	public void setIsTokenActive(boolean isTokenActive){ this.isTokenActive = isTokenActive;}
+	public void setAttemptsLeft(String attemptsLeft){ this.attemptsLeft = attemptsLeft;}
 	
 	/**
 	 * Creates the entity object which can be used to store in Google data store
@@ -81,7 +81,7 @@ public class UserData implements IStoreableData{
 		entity.setProperty("token", this.token);
 		entity.setProperty("createdOn", this.createdOn);
 		entity.setProperty("passPhrase", this.passPhrase);
-		entity.setProperty("isTokenActive", this.isTokenActive);
+		entity.setProperty("attemptsLeft", this.attemptsLeft);
 		entity.setProperty("seed", this.seed);
 				
 		return entity;
@@ -106,7 +106,7 @@ public class UserData implements IStoreableData{
 			this.token = entity.getProperty("token").toString();
 			this.createdOn = entity.getProperty("createdOn").toString();
 			this.passPhrase = entity.getProperty("passPhrase").toString();
-			this.isTokenActive = Boolean.getBoolean(entity.getProperty("isTokenActive").toString());		
+			this.attemptsLeft = entity.getProperty("attemptsLeft").toString();		
 			this.seed = entity.getProperty("seed").toString();
 		}	
 		

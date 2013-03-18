@@ -92,12 +92,15 @@ public class RegenerateSharedKeyServlet extends HttpServlet {
 			Date date = new Date();
 			UserData userData = new UserData();
 			
+			//Get the attempts count (Example: 10)
+			String attemptsCount = getServletContext().getInitParameter("attemptsCount");
+			
 			//Set the attributes
 			userData.setCreatedOn(date.toString());
 			userData.setDeviceId(this.deviceId);
 			userData.setSIMId(this.simId);
 			userData.setCountryCode(this.countryCode);			
-			userData.setIsTokenActive(true);
+			userData.setAttemptsLeft(attemptsCount);
 			userData.setPassPhrase(this.passPhrase);
 			userData.setPhoneNumber(this.phoneNumber);
 			userData.setSeed(this.seed);

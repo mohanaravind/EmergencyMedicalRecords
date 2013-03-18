@@ -163,7 +163,7 @@ body.redactorpage #header-sub h2 {
 
 body.kubepage #header-sub h2 {
 	padding-left: 33px;
-	background: url(../img/ico_kube.png) no-repeat;
+	background:  no-repeat;
 	line-height: 31px;
 }
 @media all and (-webkit-min-device-pixel-ratio: 1.5) {
@@ -372,7 +372,7 @@ body.kubepage #header-sub h2 {
 /* =BoxInner
 -----------------------------------------------------------------------------*/
 .box-inner {
-	background: url(../img/bg-gray-noise.jpg) #eee;
+	background: #eee;
 	padding: 2em 1.5em;
 	border-radius: 3px;
 	box-shadow: 0 1px 3px rgba(0, 0, 0, .3) inset;
@@ -403,7 +403,7 @@ body.kubepage #header-sub h2 {
 	display: inline-block;
 	line-height: 32px;
 	padding-left: 34px;
-	background: url(../img/ico_kube.png) no-repeat;
+	background: no-repeat;
 	background-position: 0 1px;
 }
 @media all and (-webkit-min-device-pixel-ratio: 1.5) {
@@ -573,7 +573,7 @@ body.kubepage #header-sub h2 {
 	margin-left: 0;
 	list-style: none;
 	font-size: 14px;
-	background: url(../img/bg-gray-noise.jpg) #eee;
+	background: #eee;
 	padding: 1em 1.2em;
 	border-radius: 3px;
 	box-shadow: 0 1px 3px rgba(0, 0, 0, .4);

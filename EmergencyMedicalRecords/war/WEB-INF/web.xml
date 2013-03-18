@@ -21,6 +21,11 @@
 	</servlet>
 
 	<context-param>
+		<param-name>attemptsCount</param-name>
+		<param-value>10</param-value>
+	</context-param>
+
+	<context-param>
 		<param-name>userRegistrationSubject</param-name>
 		<param-value>Your account has been verified by Emergency Response System</param-value>
 	</context-param>
