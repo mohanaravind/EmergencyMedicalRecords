@@ -12,6 +12,7 @@ import com.mohanaravind.entity.UserData;
 import com.mohanaravind.utility.DBHandler;
 import com.mohanaravind.utility.EmailHandler;
 import com.mohanaravind.utility.TokenFactory;
+import com.mohanaravind.worker.MailContentProvider;
 
 @SuppressWarnings("serial")
 public class RegisterUserServlet extends HttpServlet {
@@ -23,10 +24,12 @@ public class RegisterUserServlet extends HttpServlet {
 	private String emailId;
 	private String phoneNumber;
 	private String apiKey;
-	
+		
 	private String token;
 	private String passPhrase;
 	private String seed;
+	
+	private boolean refreshAccount;
 	
 	private boolean isAuthorizedRequest;
 	
@@ -48,9 +51,6 @@ public class RegisterUserServlet extends HttpServlet {
 		//Send the notification mail
 		sendNotificationMail();
 		
-	
-		
-		
 	}
 
 
@@ -71,7 +71,7 @@ public class RegisterUserServlet extends HttpServlet {
 		String messageBody = getMessageBody();
 		
 		//Send the mail
-		emailHandler.sendMail(this.emailId, this.phoneNumber, subject, messageBody);				
+		emailHandler.sendHTMLMail(this.emailId, this.phoneNumber, subject, messageBody);				
 	}
 	
 	/**
@@ -79,23 +79,31 @@ public class RegisterUserServlet extends HttpServlet {
 	 * @return
 	 */
 	private String getMessageBody(){
-		StringBuilder messageBody = new StringBuilder();
 		
-		messageBody.append("Hi,");
-		messageBody.append("\n");
-		messageBody.append("Welcome to Emergency Response System.");
-		messageBody.append("\n");
+		StringBuilder messageBody = new StringBuilder();
+
+		if(!this.refreshAccount)
+			messageBody.append("Welcome to Emergency Response System.");
+		else
+			messageBody.append("Your account has been refreshed.");
+			
+		messageBody.append("<br>");
 		messageBody.append("Your passphrase is:");
-		messageBody.append("\n");
+		messageBody.append("<br>");
 		messageBody.append(passPhrase);
-		messageBody.append("\n\n");
-		messageBody.append("Thanks,");
-		messageBody.append("\n");
-		messageBody.append("ERS Team");
+	
+		
+		MailContentProvider mailContentProvider = new MailContentProvider();
+		String user[] = this.emailId.split("@");
+		
+		
+		String content = mailContentProvider.getMailContent(getServletContext(), user[0], messageBody.toString());
 				
-		return messageBody.toString();
+		return content;
 	}
 
+
+	
 
 	/**Sends the response back to the requester
 	 * @param resp
@@ -215,6 +223,7 @@ public class RegisterUserServlet extends HttpServlet {
 		return response.toString();
 	}
 	
+	
 
 	/**
 	 * Generates the token and returns the string
@@ -267,6 +276,10 @@ public class RegisterUserServlet extends HttpServlet {
 				this.countryCode = req.getParameter("countryCode");
 				this.phoneNumber = req.getParameter("phoneNumber");
 				this.emailId = req.getParameter("emailId");
+				
+				if(req.getParameter("refreshAccount") != null)
+					this.refreshAccount = Boolean.getBoolean(req.getParameter("refreshAccount"));
+								
 			}else			
 				this.isAuthorizedRequest = false;
 		} catch (Exception e) {

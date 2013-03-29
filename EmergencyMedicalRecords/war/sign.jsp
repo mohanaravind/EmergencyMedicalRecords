@@ -18,6 +18,11 @@
 
 <link rel="shortcut icon" href="img/fav.ico" type="image/x-icon" />
 
+<link rel="stylesheet"
+	href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+
 
 <style type="text/css">
 .tk-ff-tisa-web-pro {
@@ -29,6 +34,47 @@
 	padding-top: 5px;
 }
 </style>
+
+<script>
+	$(function() {
+
+		//Check whether the user account is locked or not
+		var isLocked = false;
+
+		isLocked =
+<%=request.getAttribute("isLocked")%>;
+
+		if (isLocked) {
+			$("#dialogcontent")
+					.val("Your account has been locked. Please refresh your account from your device.");
+			displaydialog();
+		}
+
+	});
+
+	function displaydialog() {
+		$("#dialog-message").dialog({
+			modal : true,
+			buttons : {
+				Ok : function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+	}
+
+	function checkAgreement() {
+		var isAgrementChecked = $("#agreementcheck").is(':checked');
+
+		//If its not checked don't allow to sign in
+		$("#dialogcontent").val(
+				"You have to agree to the terms and condition to sign in.");
+
+		displaydialog();
+
+		return false;
+	}
+</script>
 
 
 </head>
@@ -60,7 +106,7 @@
 							<li><a href="/sos.jsp">SOS</a></li>
 							<li><a href="/sign.jsp" class="active"
 								style="color: #0167d8">Sign In</a></li>
-							<li><a href="#">Help</a></li>
+							<li><a href="help.html">Help</a></li>
 						</ul>
 					</div>
 				</nav>
@@ -74,8 +120,7 @@
 
 		<div class="content" id="content" role="main">
 			<div class="message">
-				<div class="container go-wide">				
-				</div>
+				<div class="container go-wide"></div>
 			</div>
 
 			<div class="container">
@@ -98,27 +143,28 @@
 
 									<span class="placeholder_wrapper"><label
 										class="placeholder_label" for="field-s-18">Phone
-											Number</label><input type="phone" value=" " autocapitalize="off"
-										class="placeholder_input" id="field-s-18" name="phoneNumber"
-										size="30"></span> <select name="countryCode"
-										style="padding: 10px;">
+											Number</label><input type="phone"
+										value="<%=request.getParameter("p") == null ? " " : request.getParameter("p")%>"
+										autocapitalize="off" class="placeholder_input" id="field-s-18"
+										name="phoneNumber" size="30"></span> <select
+										name="countryCode" style="padding: 10px;">
 
 										<%
 											DBHandler dbHandler = new DBHandler();
-																										 	CountryData countryData = new CountryData();
-																										    countryData = (CountryData)dbHandler.getData(countryData);
+																																																										 	CountryData countryData = new CountryData();
+																																																										    countryData = (CountryData)dbHandler.getData(countryData);
 										%>
 
 										<%
 											for(CountryData data : countryData.getCountries()){		
-																												//Get the country code
-																												String countryCode = data.getCountryCode().toUpperCase();
-																												
-																												String selectedStatus = "";
-																												
-																												//If its US
-																												if(countryCode.equals("US"))
-																													selectedStatus = "selected='true'";
+																																																												//Get the country code
+																																																												String countryCode = data.getCountryCode().toUpperCase();
+																																																												
+																																																												String selectedStatus = "";
+																																																												
+																																																												//If its US
+																																																												if(countryCode.equals("US"))
+																																																													selectedStatus = "selected='true'";
 										%>
 
 
@@ -151,9 +197,9 @@
 									name="token" size="30" type="password"></span></li>
 							<li class="checkbox"><label> <input
 									name="user[remember_me]" type="hidden" value="0"><input
-									checked="checked" id="user_remember_me"
-									name="user[remember_me]" type="checkbox" value="1"> I
-									agree to the terms and conditions
+									checked="checked" id="agreementcheck" name="user[remember_me]"
+									type="checkbox" value="1"> I agree to the terms and
+									conditions
 							</label></li>
 						</ol>
 						<div class="submit">
@@ -161,7 +207,7 @@
 
 							<input id="redirect_to" name="redirect_to" type="hidden">
 							<p>
-								<button class="button primary large" type="submit">Sign
+								<button class="button primary large" type="submit" onclick="return checkAgreement();">Sign
 									in to ERS</button>
 							</p>
 						</div>
@@ -187,7 +233,7 @@
 					<h3>Trouble signing in?</h3>
 					<p class="form-help-text">
 						Make sure you are entering the same passphrase which you got while
-						verifiying. Also check whether the clock in your phone is showing
+						verifying. Also check whether the clock in your phone is showing
 						the right time. <br> Read more at <a href="">How it works</a>
 					</p>
 
@@ -197,6 +243,14 @@
 		</div>
 		<div class="footer-shim"></div>
 	</div>
+	<div id="dialog-message" title="Sign In" style="display: none;">
+		<p>
+			<span class="ui-icon ui-icon-circle-check"
+				style="float: left; margin: 0 7px 50px 0;"></span> <span
+				id="dialogcontent">Your account has been locked. Please
+				refresh your account from your device.</span>
+	</div>
+
 	<footer class="contentinfo" role="contentinfo">
 		<nav class="connect-navigation">
 			<div class="container">

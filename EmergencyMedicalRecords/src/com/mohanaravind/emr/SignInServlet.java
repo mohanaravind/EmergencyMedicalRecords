@@ -1,21 +1,28 @@
 package com.mohanaravind.emr;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.logging.Logger;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 
 
 import com.mohanaravind.entity.UserData;
 import com.mohanaravind.utility.DBHandler;
+import com.mohanaravind.utility.EmailHandler;
 import com.mohanaravind.utility.TokenFactory;
+import com.mohanaravind.worker.MailContentProvider;
 
 @SuppressWarnings("serial")
 public class SignInServlet extends HttpServlet {
 
 
 	private String userId;
+	private String emailId;
 	private String phoneNumber;
 	private String countryCode;
 	
@@ -26,8 +33,11 @@ public class SignInServlet extends HttpServlet {
 
 	private boolean isAuthenticUser;
  
+	private boolean isLocked;
+	
 	private static final Logger _log = Logger.getLogger(SignInServlet.class.getName()); 
-
+	
+	
 	
 	/* (non-Javadoc)
 	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
@@ -56,16 +66,13 @@ public class SignInServlet extends HttpServlet {
 	public void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 		
+                
+
 		//Get the inputs
 		retrieveInputs(req);
 				
 		//Authenticate the user
 		authenticateUser();
-		
-		/////////////REMOVE THIS AFTER TESTING/////////////////
-		//this.userId = "7169395750us";
-		//isAuthenticUser = true;
-		///////////////////////////////////////////////////////
 		
 		//If its an authentic user
 		if(isAuthenticUser){				
@@ -83,10 +90,11 @@ public class SignInServlet extends HttpServlet {
 				log(e.getMessage());
 			}				
 		}
-		else{
-			
-			if(!isSOS)
-				resp.sendRedirect("sign.jsp?isAuthenticUser=false");
+		else{			
+			if(!isSOS){				
+				req.setAttribute("isLocked", isLocked);
+				resp.sendRedirect("sign.jsp?isAuthenticUser=false&isLocked=" + String.valueOf(isLocked));
+			}
 			else{
 				//Pass on the user id and SOS attribute
 				req.setAttribute("userId", this.userId);
@@ -96,12 +104,10 @@ public class SignInServlet extends HttpServlet {
 					req.getRequestDispatcher("sos.jsp?attempt=failed").forward(req, resp);										
 				} catch (ServletException e) {
 					log(e.getMessage());
-				}
-				
-			}
-				
+				}				
+			}				
 		}
-
+		
 	}
 
 
@@ -120,17 +126,25 @@ public class SignInServlet extends HttpServlet {
 			//Get the user data
 			userData = (UserData)dbHandler.getData(this.userId, userData);
 				
+			this.emailId = userData.getEmailId();
+			
+			//Get attempts left
+			Integer attemptsLeft = Integer.parseInt(userData.getAttemptsLeft());
+			
+			//Check the attempts left
+			if(attemptsLeft == 0){
+				isLocked = true;
+				return;
+			}
+			
 			//If its an SOS attempt
-			if(isSOS){
-				//Get attempts left
-				Integer attemptsLeft = Integer.parseInt(userData.getAttemptsLeft());
-				
-				//Check the attempts left
-				if(attemptsLeft == 0)
-					return;
-				
+			if(isSOS){				
 				//Decrement the attempt left
 				attemptsLeft--;
+				
+				//If there are no more attempts left
+				if(attemptsLeft == 0)
+					sendNotificationMail();
 				
 				//Set the attempt
 				userData.setAttemptsLeft(attemptsLeft.toString());
@@ -202,6 +216,57 @@ public class SignInServlet extends HttpServlet {
 	}
 
 
+	/**
+	 * Sends the notification mail to the newly registering user
+	 * @author Aravind
+	 */
+	private void sendNotificationMail() {
+		//Declarations
+		String senderId = getServletContext().getInitParameter("notifierId");
+		String senderName = getServletContext().getInitParameter("notifierName");
+		String subject = getServletContext().getInitParameter("userRegistrationSubject");
+		
+		//Create the email handler
+		EmailHandler emailHandler = EmailHandler.getEmailHandler(senderId, senderName);		
+		
+		//Get the message body
+		String messageBody = getMessageBody();
+		
+		//Send the mail
+		emailHandler.sendHTMLMail(this.emailId, this.phoneNumber, subject, messageBody);				
+	}
+	
+	/**
+	 * Creates the message body for the notification mail
+	 * @return
+	 */
+	private String getMessageBody(){
+		//StringBuilder messageBody = new StringBuilder();
+		
+		/*
+		messageBody.append("Hi,");
+		messageBody.append("\n");
+		messageBody.append("Your account has been locked.");
+		messageBody.append("\n");
+		messageBody.append("Please unlock it by using Refresh account option from your device.");
+		messageBody.append("\n");
+		messageBody.append(passPhrase);
+		messageBody.append("\n\n");
+		messageBody.append("Thanks,");
+		messageBody.append("\n");
+		messageBody.append("ERS Team");
+		*/
+		
+		MailContentProvider mailContentProvider = new MailContentProvider();
+		String user[] = this.emailId.split("@");
+		String message = "Your account has been locked.<br>Please Unlocked it by refreshing your account from your device.";
+		
+		String content = mailContentProvider.getMailContent(getServletContext(), user[0], message);
+				
+		return content;
+	}
+
+	
 
 
 }

@@ -23,5 +23,16 @@
 	<inbound-services>
 		<service>mail</service>
 	</inbound-services>
+	
+	 <static-files>
+        <include path="/data/mailer.txt"/>
+        <include path="/img/fav.ico"/>
+        <include path="/sign_files/play.png"/>
+        <include path="/sign_files/title.png"/>
+        <include path="/sign_files/kenobi-70cd47d8c508f416e516f7847d8fe120.js"/>
+        <include path="/sign_files/logo.png"/>
+        <include path="/favicon.ico "/>
+        <include path="/sign_files/kenobi-d4890ff284e4b7657991b94ba1b77ad4.css"/>
+    </static-files> 
 
 </appengine-web-app>
