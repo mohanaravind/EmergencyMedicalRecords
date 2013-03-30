@@ -226,7 +226,7 @@
 					<h3>Download Android App</h3>
 					<ul class="sign-in">
 						<li><a
-							href="https://play.google.com/store/apps/details?id=com.mohanaravind.colorpicker#?t=W251bGwsMSwxLDIxMiwiY29tLm1vaGFuYXJhdmluZC5jb2xvcnBpY2tlciJd"><img
+							href="https://play.google.com/store/apps/details?id=com.mohanaravind.main&feature=search_result#?t=W251bGwsMSwxLDEsImNvbS5tb2hhbmFyYXZpbmQubWFpbiJd"><img
 								src="sign_files/play.png" /></span></a></li>
 
 					</ul>

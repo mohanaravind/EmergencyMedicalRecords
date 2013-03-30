@@ -5,6 +5,7 @@ package com.mohanaravind.utility;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -97,7 +98,7 @@ public class TokenFactory {
 			String gmtTime = "GMT Time";
 
 			final Date currentTime = new Date();
-			final SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy hh:mm a z");
+			final SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy hh:mm", Locale.US);
 
 			// Give it to me in GMT time.
 			sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
