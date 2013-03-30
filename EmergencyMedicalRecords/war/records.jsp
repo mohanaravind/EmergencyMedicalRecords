@@ -2,7 +2,9 @@
 <%@page import="com.mohanaravind.utility.DBHandler"%>
 <%@page import="com.mohanaravind.entity.UserData"%>
 <%@page import="com.mohanaravind.worker.*"%>
+<%@page import="java.util.logging.*"%>
 <%@page import="com.google.appengine.api.users.User"%>
+
 
 
 
@@ -28,7 +30,6 @@
 		
 		//Select the marked tab
 		var tabMarker = '<%=request.getAttribute("tabMarker")%>';
-	
 
 		if (tabMarker != 'null') {
 			var tab = $("#" + tabMarker);
@@ -54,11 +55,12 @@
 			$("#human").attr("src", "img/" + part + ".png");
 		});
 
-
 		//Display saved successfully message
 		var savedSucessfully = false;
 
-		savedSucessfully = <%=request.getAttribute("saved")%>;
+		savedSucessfully =
+<%=request.getAttribute("saved")%>
+	;
 
 		if (savedSucessfully)
 			displaydialog();
@@ -103,12 +105,14 @@ body {
 	String[] personalDateOfBirth;
 	Boolean isSOS = false;
 	String disabled = "";
-	%>
+	String logMessage = "Inside";
+	static final Logger _log = Logger.getLogger("records.jsp");%>
 
 
 	<%
 		String userName = "";
-	    
+
+		_log.setLevel(Level.ALL);
 
 		try {
 			//Get the userId
@@ -120,9 +124,9 @@ body {
 				userName = userId;
 
 				isSOS = (Boolean) request.getAttribute("isSOS");
-				
+
 				//Store it in the session object if its not an SOS
-				if(!isSOS)
+				if (!isSOS)
 					session.setAttribute("userId", userId);
 				else
 					disabled = "disabled = true";
@@ -136,32 +140,36 @@ body {
 
 			DBHandler dbHandler = new DBHandler();
 			UserData userData = new UserData();
-			dbHandler.getData(userId, userData);
+			userData = (UserData) dbHandler.getData(userId, userData);
 
-			User user = new User(userData.getEmailId(), "gmail.com");
-			userName = user.getNickname();
+			userName = userData.getEmailId();
+						
 
-			//Get the medical data
-			medicalData = (MedicalData) dbHandler.getData(userId,
-					medicalData);
+			medicalData = (MedicalData) dbHandler.getData(userId, medicalData);
+				
 
 			String[] emptyData = new String[3];
 			emptyData[0] = "";
 			emptyData[1] = "";
 			emptyData[2] = "";
+			
+							
+			if(medicalData == null || !medicalData.getUserId().equals(userId)){
 
-			//Get the details
-			personalDateOfBirth = medicalData.getPersonalDateOfBirth()
-					.split(",");
+				medicalData = new MedicalData();
+				personalDateOfBirth = emptyData;
+			}else{
+				//Get the details
+				personalDateOfBirth = medicalData.getPersonalDateOfBirth().split(",");
+			}
+				
 
 		} catch (Exception ex) {
-			response.sendRedirect("sign.jsp?error=unableToRetrieveUserData");
+			_log.warning("records.jsp: Error while retrieving information");
+			response.sendRedirect("sign.jsp?error=unableToRetrieveUserData&logMessage="
+					+ logMessage);
 		}
 	%>
-
-
-
-
 
 
 	<div class="wrapper">
@@ -177,14 +185,19 @@ body {
 				<span id="userName"><%=userName%></span>
 			</div>
 			<div style="text-align: right;">
-				<% if(!isSOS) { %>			    
-					<a id="signOut" href="../saverecordsservlet?signout=true">Sign
-						out</a>
-				<% } else { %>
-					<a id="signOut" href="../sos.jsp">Close
-						</a>									
-				<% } %>
-					
+				<%
+					if (!isSOS) {
+				%>
+				<a id="signOut" href="../saverecordsservlet?signout=true">Sign
+					out</a>
+				<%
+					} else {
+				%>
+				<a id="signOut" href="../sos.jsp">Close </a>
+				<%
+					}
+				%>
+
 			</div>
 		</header>
 
@@ -233,10 +246,10 @@ body {
 												<ul>
 													<li class="form-section">Personal Contact</li>
 													<li><label for="foo">Name </label> <input type="text"
-														name="personalcontact_name" id="foo" <%= disabled %>
+														name="personalcontact_name" id="foo" <%=disabled%>
 														value=<%=medicalData.getPersonalName()%>></li>
-													<li><label for="foo">Sex </label> <select <%= disabled %>
-														name="personalcontact_sex"><%=worker.getSexOptions(medicalData.getSex())%>
+													<li><label for="foo">Sex </label> <select
+														<%=disabled%> name="personalcontact_sex"><%=worker.getSexOptions(medicalData.getSex())%>
 													</select></li>
 
 													<li>
@@ -244,37 +257,40 @@ body {
 															<section>
 																<label>Address</label>
 															</section>
-															<textarea name="personalcontact_address" <%= disabled %> class="width-50"
-																style="height: 50px;"><%=medicalData.getPersonalAddress()%></textarea>
+															<textarea name="personalcontact_address" <%=disabled%>
+																class="width-50" style="height: 50px;"><%=medicalData.getPersonalAddress()%></textarea>
 
 
 														</fieldset>
 													</li>
-													<li><label for="foo">Phone number</label> ( <input <%= disabled %>
-														type="text" name="personalcontact_phonenumber1" id="foo"
-														size="3"
+													<li><label for="foo">Phone number</label> ( <input
+														<%=disabled%> type="text"
+														name="personalcontact_phonenumber1" id="foo" size="3"
 														value=<%=worker.getPhoneNumber(medicalData.getPersonalPhone(),
 					Worker.Part.first)%>>
-														) <input <%= disabled %> type="text" name="personalcontact_phonenumber2"
-														id="foo" size="3"
+														) <input <%=disabled%> type="text"
+														name="personalcontact_phonenumber2" id="foo" size="3"
 														value=<%=worker.getPhoneNumber(medicalData.getPersonalPhone(),
 					Worker.Part.second)%>>
-														- <input <%= disabled %> type="text" name="personalcontact_phonenumber3"
-														id="foo" size="3"
+														- <input <%=disabled%> type="text"
+														name="personalcontact_phonenumber3" id="foo" size="3"
 														value=<%=worker.getPhoneNumber(medicalData.getPersonalPhone(),
 					Worker.Part.third)%>>
 													<li>
 														<fieldset>
 															<section>Date of Birth</section>
 															<ul class="multicolumn">
-																<li><select <%= disabled %> name="personalcontact_month"><%=worker.getMonthOptions(personalDateOfBirth[0])%>
+																<li><select <%=disabled%>
+																	name="personalcontact_month"><%=worker.getMonthOptions(personalDateOfBirth[0])%>
 																</select>
 																	<div class="descr">Month</div></li>
-																<li><select <%= disabled %> name="personalcontact_day">
+																<li><select <%=disabled%>
+																	name="personalcontact_day">
 																		<%=worker.getOptions(1, 32, personalDateOfBirth[1])%>
 																</select>
 																	<div class="descr">Day</div></li>
-																<li><select <%= disabled %> name="personalcontact_year">
+																<li><select <%=disabled%>
+																	name="personalcontact_year">
 																		<%=worker.getOptions(1920, 2010, personalDateOfBirth[2])%>
 																</select>
 																	<div class="descr">Year</div></li>
@@ -283,64 +299,66 @@ body {
 													</li>
 													<li class="form-section">Emergency Contact</li>
 
-													<li><label for="foo">Contact 1</label> <input <%= disabled %>
-														type="text" name="emergencycontact_name1" id="foo"
-														value=<%=medicalData.getEmergencyContact1()%>></li>
-													<li><label for="foo">Phone number</label> ( <input <%= disabled %>
-														type="text" name="emergencycontact_1_phone1" id="foo"
-														size="3"
+													<li><label for="foo">Contact 1</label> <input
+														<%=disabled%> type="text" name="emergencycontact_name1"
+														id="foo" value=<%=medicalData.getEmergencyContact1()%>></li>
+													<li><label for="foo">Phone number</label> ( <input
+														<%=disabled%> type="text"
+														name="emergencycontact_1_phone1" id="foo" size="3"
 														value=<%=worker.getPhoneNumber(
 					medicalData.getEmergencyContact1Phone(), Worker.Part.first)%>>
-														) <input <%= disabled %> type="text" name="emergencycontact_1_phone2"
-														id="foo" size="3"
+														) <input <%=disabled%> type="text"
+														name="emergencycontact_1_phone2" id="foo" size="3"
 														value=<%=worker.getPhoneNumber(
 					medicalData.getEmergencyContact1Phone(), Worker.Part.second)%>>
-														- <input <%= disabled %> type="text" name="emergencycontact_1_phone3"
-														id="foo" size="3"
+														- <input <%=disabled%> type="text"
+														name="emergencycontact_1_phone3" id="foo" size="3"
 														value=<%=worker.getPhoneNumber(
 					medicalData.getEmergencyContact1Phone(), Worker.Part.third)%>>
 													<li>
-													<li><label for="foo">Contact 2</label> <input <%= disabled %>
-														type="text" name="emergencycontact_name2" id="foo"
-														value=<%=medicalData.getEmergencyContact2()%>></li>
+													<li><label for="foo">Contact 2</label> <input
+														<%=disabled%> type="text" name="emergencycontact_name2"
+														id="foo" value=<%=medicalData.getEmergencyContact2()%>></li>
 													<li><label for="foo">Phone number</label> ( <input
 														type="text" name="emergencycontact_2_phone1" id="foo"
 														size="3"
 														value=<%=worker.getPhoneNumber(
 					medicalData.getEmergencyContact2Phone(), Worker.Part.first)%>>
-														) <input <%= disabled %> type="text" name="emergencycontact_2_phone2"
-														id="foo" size="3"
+														) <input <%=disabled%> type="text"
+														name="emergencycontact_2_phone2" id="foo" size="3"
 														value=<%=worker.getPhoneNumber(
 					medicalData.getEmergencyContact2Phone(), Worker.Part.second)%>>
-														- <input <%= disabled %> type="text" name="emergencycontact_2_phone3"
-														id="foo" size="3"
+														- <input <%=disabled%> type="text"
+														name="emergencycontact_2_phone3" id="foo" size="3"
 														value=<%=worker.getPhoneNumber(
 					medicalData.getEmergencyContact2Phone(), Worker.Part.third)%>>
 													<li>
 													<li class="form-section">Provider Information</li>
 
-													<li><label for="foo">Primary care</label> <input <%= disabled %>
-														type="text" name="emergencycontact_care" id="foo"
-														value=<%=medicalData.getPrimaryCare()%>></li>
-													<li><label for="foo">Phone number</label> ( <input <%= disabled %>
-														type="text" name="emergencycontact_care_phone1" id="foo"
-														size="3"
+													<li><label for="foo">Primary care</label> <input
+														<%=disabled%> type="text" name="emergencycontact_care"
+														id="foo" value=<%=medicalData.getPrimaryCare()%>></li>
+													<li><label for="foo">Phone number</label> ( <input
+														<%=disabled%> type="text"
+														name="emergencycontact_care_phone1" id="foo" size="3"
 														value=<%=worker.getPhoneNumber(medicalData.getPrimaryCarePhone(),
 					Worker.Part.first)%>>
-														) <input type="text" name="emergencycontact_care_phone2" <%= disabled %>
-														id="foo" size="3"
+														) <input type="text" name="emergencycontact_care_phone2"
+														<%=disabled%> id="foo" size="3"
 														value=<%=worker.getPhoneNumber(medicalData.getPrimaryCarePhone(),
 					Worker.Part.first)%>>
-														- <input type="text" name="emergencycontact_care_phone3" <%= disabled %>
-														id="foo" size="3"
+														- <input type="text" name="emergencycontact_care_phone3"
+														<%=disabled%> id="foo" size="3"
 														value=<%=worker.getPhoneNumber(medicalData.getPrimaryCarePhone(),
 					Worker.Part.third)%>>
 													<li>
-													<li><label for="foo">Insurance</label> <input <%= disabled %>
-														type="text" name="emergencycontact_insurance" id="foo"
+													<li><label for="foo">Insurance</label> <input
+														<%=disabled%> type="text"
+														name="emergencycontact_insurance" id="foo"
 														value=<%=medicalData.getInsurance()%>></li>
-													<li><label for="foo">Insurance ID</label> <input <%= disabled %>
-														type="text" name="emergencycontact_insuranceid" id="foo"
+													<li><label for="foo">Insurance ID</label> <input
+														<%=disabled%> type="text"
+														name="emergencycontact_insuranceid" id="foo"
 														value=<%=medicalData.getInsuranceId()%>></li>
 
 													<li class="form-section">Conditions</li>
@@ -349,8 +367,8 @@ body {
 															<section>
 																<label>Medications</label>
 															</section>
-															<textarea name="emergencycontact_medications" <%= disabled %>
-																class="width-50" style="height: 50px;"><%=medicalData.getMedicalCondition()%></textarea>
+															<textarea name="emergencycontact_medications"
+																<%=disabled%> class="width-50" style="height: 50px;"><%=medicalData.getMedicalCondition()%></textarea>
 
 														</fieldset>
 													</li>
@@ -359,8 +377,8 @@ body {
 															<section>
 																<label>Allergies</label>
 															</section>
-															<textarea name="emergencycontact_allergies" <%= disabled %>
-																class="width-50" style="height: 50px;"><%=medicalData.getAllergies()%></textarea>
+															<textarea name="emergencycontact_allergies"
+																<%=disabled%> class="width-50" style="height: 50px;"><%=medicalData.getAllergies()%></textarea>
 														</fieldset>
 													</li>
 													<li>
@@ -368,8 +386,8 @@ body {
 															<section>
 																<label>Special Note</label>
 															</section>
-															<textarea name="emergencycontact_specialnote" <%= disabled %>
-																class="width-50" style="height: 50px;"><%=medicalData.getSpecialNotes()%></textarea>
+															<textarea name="emergencycontact_specialnote"
+																<%=disabled%> class="width-50" style="height: 50px;"><%=medicalData.getSpecialNotes()%></textarea>
 														</fieldset>
 													</li>
 
@@ -393,8 +411,8 @@ body {
 
 																<label>Notes</label>
 															</section>
-															<textarea name="head_notes" class="width-90" <%= disabled %>
-																style="height: 200px;"><%=medicalData.getHeadNotes()%></textarea>
+															<textarea name="head_notes" class="width-90"
+																<%=disabled%> style="height: 200px;"><%=medicalData.getHeadNotes()%></textarea>
 														</fieldset>
 													</li>
 												</ul>
@@ -417,8 +435,8 @@ body {
 
 																<label>Notes</label>
 															</section>
-															<textarea name="neck_notes" class="width-90" <%= disabled %>
-																style="height: 200px;"><%=medicalData.getNeckNotes()%></textarea>
+															<textarea name="neck_notes" class="width-90"
+																<%=disabled%> style="height: 200px;"><%=medicalData.getNeckNotes()%></textarea>
 														</fieldset>
 													</li>
 												</ul>
@@ -440,8 +458,8 @@ body {
 
 																<label>Notes</label>
 															</section>
-															<textarea name="chest_notes" class="width-90" <%= disabled %>
-																style="height: 200px;"><%=medicalData.getChestNotes()%></textarea>
+															<textarea name="chest_notes" class="width-90"
+																<%=disabled%> style="height: 200px;"><%=medicalData.getChestNotes()%></textarea>
 														</fieldset>
 													</li>
 												</ul>
@@ -462,8 +480,8 @@ body {
 
 																<label>Notes</label>
 															</section>
-															<textarea name="arms_notes" class="width-90" <%= disabled %>
-																style="height: 200px;"><%=medicalData.getArmsNotes()%></textarea>
+															<textarea name="arms_notes" class="width-90"
+																<%=disabled%> style="height: 200px;"><%=medicalData.getArmsNotes()%></textarea>
 														</fieldset>
 													</li>
 												</ul>
@@ -485,8 +503,8 @@ body {
 
 																<label>Notes</label>
 															</section>
-															<textarea name="legs_notes" class="width-90" <%= disabled %>
-																style="height: 200px;"><%=medicalData.getLegsNotes()%></textarea>
+															<textarea name="legs_notes" class="width-90"
+																<%=disabled%> style="height: 200px;"><%=medicalData.getLegsNotes()%></textarea>
 														</fieldset>
 													</li>
 												</ul>
@@ -501,17 +519,24 @@ body {
 
 									<br>
 
-									<% if(!isSOS)  {%>
+									<%
+										if (!isSOS) {
+									%>
 									<div style="text-align: center;">
 										<input type="submit" class="btn-big" value="Save changes">
 									</div>
-									<% } else{ %>
+									<%
+										} else {
+									%>
 
 									<div style="text-align: center;">
-										<input type="button" class="btn-big" value="Close" onClick="window.location='/sos.jsp'" >
+										<input type="button" class="btn-big" value="Close"
+											onClick="window.location='/sos.jsp'">
 									</div>
 
-									<% } %>
+									<%
+										}
+									%>
 
 
 								</form>

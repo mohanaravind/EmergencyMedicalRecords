@@ -191,7 +191,7 @@
 					<p class="form-help-text">
 						Make sure you are entering the right token which you received.
 						Note that this token is valid only for the number of attempts
-						which are displayed above. <br> Read more at <a href="">How
+						which are displayed above. <br> Read more at <a href="help.html">How
 							it works</a>
 					</p>
 
@@ -222,7 +222,6 @@
 					</small>
 				</p>
 				<ul class="legal-navigation">
-					<li><small><a href="privacy.html">Privacy Policy</a></small></li>
 					<li><small><a href="agreement.html">User Agreement</a></small></li>
 				</ul>
 			</div>

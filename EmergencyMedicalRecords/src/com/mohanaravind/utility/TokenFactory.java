@@ -15,19 +15,19 @@ import java.util.TimeZone;
  *
  */
 public class TokenFactory {
-	private final Integer primaryKey = 926543;
-	private final Integer secondaryKey = 265732;
-	private final Integer tertiaryKey = 346925;
-	
-	private final Integer masterKey = 482695;
-	
+	private final Integer primaryKey = 15641987;
+	private final Integer secondaryKey = 187879369;
+	private final Integer tertiaryKey = 12849853;
+
+	private final Integer masterKey = 18549851;
+
 	private Integer gmt = 0;	
 	private Integer salt = 0;
 	private Integer phoneHash = 0;
 	private Integer deviceHash = 0;
 	private Integer token = 0;
-	
-	
+
+
 	private Integer seed = 0;
 	private String passphrase = "";
 	private String phoneNumber = "";
@@ -35,9 +35,9 @@ public class TokenFactory {
 	private String simId = "";
 	private String countryCode = "";
 	private String emailID = "";
-	
-		
-	
+
+
+
 	/**
 	 * Constructor
 	 * @param phoneNumber
@@ -54,9 +54,9 @@ public class TokenFactory {
 		this.seed = Integer.valueOf(seed);
 		this.emailID = emailID;
 	}
-	
 
-	
+
+
 	/**
 	 * Creates the token
 	 * @return
@@ -65,29 +65,29 @@ public class TokenFactory {
 		try {
 			//Generate GMT
 			generateGMT();
-			
+
 			//Salt generation
 			generateSalt();
-			
+
 			//Generate the phone's hash
 			generatePhoneHash();
-			
+
 			//Generate the device's hash
 			generateDeviceHash();
-			
+
 			//Build the token
 			buildToken();
-			
+
 			//Ensure the token is the right size
 			ensureTokenIntegrity();
 		} catch (Exception e) {
-			token = 6714;			
+			token = 1223;			
 		}
-		
+
 		return token;
 	}
-	
-	
+
+
 	/**
 	 * Returns the GMT date time Hash code
 	 * @return
@@ -99,16 +99,19 @@ public class TokenFactory {
 			final Date currentTime = new Date();
 			final SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy hh:mm a z");
 
-			 // Give it to me in GMT time.
-			 sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-			 
-			 //Get the date time
-			 gmtTime = sdf.format(currentTime);
-			 
-			 //Set the GMT date time hash code
-			 gmt = gmtTime.hashCode();
+			// Give it to me in GMT time.
+			sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+			//Get the date time
+			gmtTime = sdf.format(currentTime);
+
+			String[] formattedTime = gmtTime.split("GMT");
+			gmtTime = formattedTime[0].trim();
+
+			//Set the GMT date time hash code
+			gmt = gmtTime.hashCode();
 		} catch (Exception e) {
-			gmt = 512434897;
+			gmt = 1879847;
 		}
 	}
 
@@ -117,13 +120,13 @@ public class TokenFactory {
 	 * @return
 	 */
 	private void generateSalt(){				
-	    try {
+		try {
 			salt = gmt + passphrase.hashCode() - primaryKey * seed.hashCode();
 		} catch (Exception e) {
-			salt = -121594;
+			salt = -8803;
 		}	    	    
 	}
-	
+
 	/**
 	 * Generate the phone hash
 	 */
@@ -131,10 +134,10 @@ public class TokenFactory {
 		try {
 			phoneHash = seed.hashCode() - secondaryKey + salt.hashCode() * phoneNumber.hashCode() + emailID.hashCode();
 		} catch (Exception e) {
-			phoneHash = 1879348;
+			phoneHash = 8798813;
 		}
 	}
-	
+
 	/**
 	 * Generate the device hash
 	 */
@@ -142,44 +145,44 @@ public class TokenFactory {
 		try {
 			deviceHash = tertiaryKey*deviceId.hashCode() + salt.hashCode() + phoneHash.hashCode() * simId.hashCode() / countryCode.hashCode();
 		} catch (Exception e) {
-			deviceHash = 1181893;
+			deviceHash = 87987877;
 		}
 	}
-	
+
 	/**
 	 * Build the token
 	 */
 	private void buildToken(){
 		try {
 			Integer tokenSeed = deviceHash.hashCode() - masterKey.hashCode() + gmt.hashCode();
-			
+
 			//Get the absolute value					
 			tokenSeed = Math.abs(tokenSeed.hashCode()) + Math.abs(gmt.hashCode()) + 1000;
-			
+
 			String tokenized = String.valueOf(tokenSeed);
-			
+
 			//Get the length
 			Integer length = tokenized.length();
-			
+
 			String tokenString = tokenized.substring(length - 4, length);
-			
+
 			//Get the token
 			token = Integer.valueOf(tokenString);
 		} catch (NumberFormatException e) {
-			token = 6714;
+			token = 4889;
 		}
 	}
-	
+
 	/**
 	 * To make sure the token is in the right size
 	 */
 	private void ensureTokenIntegrity(){
 		String tokenized = String.valueOf(token);
-		
+
 		while (tokenized.length() < 4 ) {
 			tokenized = tokenized.concat("7");			
 		}
-		
+
 		//Set the token value
 		token = Integer.valueOf(tokenized);
 	}

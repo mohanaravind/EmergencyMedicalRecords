@@ -14,7 +14,7 @@ import com.mohanaravind.utility.IStoreableData;
  */
 public class MedicalData implements IStoreableData {
 
-	private String _userId;
+	private String _userId = "";
 	public void setUserId(String value) {_userId = value;}
 	public String getUserId() {return _userId;}
 	

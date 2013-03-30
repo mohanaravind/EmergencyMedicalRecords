@@ -12,7 +12,7 @@
 	</system-properties>
 
 	<sessions-enabled>true</sessions-enabled>
-	
+
 	<!-- HTTP Sessions are disabled by default. To enable HTTP sessions specify: 
 		<sessions-enabled>true</sessions-enabled> It's possible to reduce request 
 		latency by configuring your application to asynchronously write HTTP session 
@@ -23,16 +23,56 @@
 	<inbound-services>
 		<service>mail</service>
 	</inbound-services>
-	
-	 <static-files>
-        <include path="/data/mailer.txt"/>
-        <include path="/img/fav.ico"/>
-        <include path="/sign_files/play.png"/>
-        <include path="/sign_files/title.png"/>
-        <include path="/sign_files/kenobi-70cd47d8c508f416e516f7847d8fe120.js"/>
-        <include path="/sign_files/logo.png"/>
-        <include path="/favicon.ico "/>
-        <include path="/sign_files/kenobi-d4890ff284e4b7657991b94ba1b77ad4.css"/>
-    </static-files> 
+
+	<static-files>
+		<include path="/data/mailer.txt" />
+
+		<include path="/sign_files/play.png" />
+		<include path="/sign_files/title.png" />
+		<include path="/sign_files/kenobi-70cd47d8c508f416e516f7847d8fe120.js" />
+		<include path="/sign_files/logo.png" />
+
+		<include path="/sign_files/kenobi-d4890ff284e4b7657991b94ba1b77ad4.css" />
+
+		<include path="/hr_files/ga.js" />
+		<include path="/hr_files/global.js" />
+		<include path="/hr_files/jet.js" />
+		<include path="/hr_files/jquery-1.js" />
+		<include path="/hr_files/kube.css" />
+		<include path="/hr_files/pretify.js" />
+		<include path="/hr_files/screen.css" />
+		<include path="/hr_files/watch.js" />
+
+		<include path="/favicon.ico " />
+
+		<include path="/img/fav.ico" />
+		<include path="/img/arms.png" />
+		<include path="/img/bgnoise.jpg" />
+		<include path="/img/chest.png" />
+		<include path="/img/general.png" />
+		<include path="/img/head.png" />
+		<include path="/img/legs.png" />
+		<include path="/img/logo.png" />
+		<include path="/img/neck.png" />
+		<include path="/img/separator.png" />
+		<include path="/img/title.png" />
+
+
+		<include path="/agreement.html" />
+		<include path="/help.html" />
+
+		<include path="/help/1.png" />
+		<include path="/help/2.png" />
+		<include path="/help/3.png" />
+		<include path="/help/4.png" />
+		<include path="/help/5.png" />
+		<include path="/help/6.png" />
+		<include path="/help/7.png" />
+		<include path="/help/icon.png" />
+		<include path="/help/S1.png" />
+		<include path="/help/S2.png" />
+		<include path="/help/S3.png" />
+		<include path="/help/verify.png" />
+	</static-files>
 
 </appengine-web-app>

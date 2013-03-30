@@ -1,12 +1,9 @@
 package com.mohanaravind.emr;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 
@@ -20,6 +17,7 @@ import com.mohanaravind.worker.MailContentProvider;
 @SuppressWarnings("serial")
 public class SignInServlet extends HttpServlet {
 
+		
 
 	private String userId;
 	private String emailId;
@@ -37,6 +35,10 @@ public class SignInServlet extends HttpServlet {
 	
 	private static final Logger _log = Logger.getLogger(SignInServlet.class.getName()); 
 	
+	public SignInServlet(){
+		//Set the log level
+		_log.setLevel(Level.ALL);		
+	}
 	
 	
 	/* (non-Javadoc)
@@ -65,9 +67,6 @@ public class SignInServlet extends HttpServlet {
 	
 	public void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
-		
-                
-
 		//Get the inputs
 		retrieveInputs(req);
 				
@@ -80,14 +79,14 @@ public class SignInServlet extends HttpServlet {
 			req.setAttribute("userId", this.userId);
 			req.setAttribute("isSOS", isSOS);
 			
-			if(isSOS)
+			//if(isSOS)
 				req.getSession(true).removeAttribute("userId");
 			
 			//Forward the request to the records page
 			try {
 				req.getRequestDispatcher("records.jsp").forward(req, resp);
 			} catch (ServletException e) {
-				log(e.getMessage());
+				log("SignInServlet_doPost_RedirectingError:" + e.getMessage());
 			}				
 		}
 		else{			
@@ -127,7 +126,7 @@ public class SignInServlet extends HttpServlet {
 			userData = (UserData)dbHandler.getData(this.userId, userData);
 				
 			this.emailId = userData.getEmailId();
-			
+									
 			//Get attempts left
 			Integer attemptsLeft = Integer.parseInt(userData.getAttemptsLeft());
 			
@@ -168,18 +167,22 @@ public class SignInServlet extends HttpServlet {
 															 userData.getSeed(), userData.getEmailId(), userData.getSIMId(), userData.getCountryCode());		
 				
 				//Generate the token 
-				tokenGeneratedBySystem = tokenFactory.generateToken().toString();
+				tokenGeneratedBySystem = tokenFactory.generateToken().toString();								
 			}
 		
+			
+			
 			//Token check
-			if(!tokenGeneratedBySystem.equals(this.token))
-				return;
+			if(!tokenGeneratedBySystem.equals(this.token)){				
+				_log.info(userId + tokenGeneratedBySystem);
+				return;			
+			}
 						
 			//Set the flag that the user is authentic
 			this.isAuthenticUser = true;					
 		} catch (Exception e) {
 			this.isAuthenticUser = false;
-			_log.info("authenticateUser: " + e.getMessage());
+			_log.info("authenticateUser: " + userData.getPhoneNumber());
 		}
 		
 				
@@ -241,22 +244,6 @@ public class SignInServlet extends HttpServlet {
 	 * @return
 	 */
 	private String getMessageBody(){
-		//StringBuilder messageBody = new StringBuilder();
-		
-		/*
-		messageBody.append("Hi,");
-		messageBody.append("\n");
-		messageBody.append("Your account has been locked.");
-		messageBody.append("\n");
-		messageBody.append("Please unlock it by using Refresh account option from your device.");
-		messageBody.append("\n");
-		messageBody.append(passPhrase);
-		messageBody.append("\n\n");
-		messageBody.append("Thanks,");
-		messageBody.append("\n");
-		messageBody.append("ERS Team");
-		*/
-		
 		MailContentProvider mailContentProvider = new MailContentProvider();
 		String user[] = this.emailId.split("@");
 		String message = "Your account has been locked.<br>Please Unlocked it by refreshing your account from your device.";

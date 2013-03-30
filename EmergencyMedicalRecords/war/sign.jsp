@@ -234,7 +234,7 @@
 					<p class="form-help-text">
 						Make sure you are entering the same passphrase which you got while
 						verifying. Also check whether the clock in your phone is showing
-						the right time. <br> Read more at <a href="">How it works</a>
+						the right time. <br> Read more at <a href="help.html">How it works</a>
 					</p>
 
 				</div>
@@ -272,7 +272,6 @@
 					</small>
 				</p>
 				<ul class="legal-navigation">
-					<li><small><a href="privacy.html">Privacy Policy</a></small></li>
 					<li><small><a href="agreement.html">User Agreement</a></small></li>
 				</ul>
 			</div>

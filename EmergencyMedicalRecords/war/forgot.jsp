@@ -218,7 +218,6 @@
 					</small>
 				</p>
 				<ul class="legal-navigation">
-					<li><small><a href="">Privacy Policy</a></small></li>
 					<li><small><a href="">User Agreement</a></small></li>
 				</ul>
 			</div>

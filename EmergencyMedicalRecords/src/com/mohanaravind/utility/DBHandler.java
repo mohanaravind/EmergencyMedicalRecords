@@ -4,6 +4,8 @@
 package com.mohanaravind.utility;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -18,6 +20,13 @@ import com.google.appengine.api.datastore.Query;
  *
  */
 public class DBHandler {
+	
+	private static final Logger _log = Logger.getLogger(DBHandler.class.getName()); 
+	
+	
+	public DBHandler(){
+		_log.setLevel(Level.ALL);
+	}
 	
 	/**
 	 * Stores the data to google data store
@@ -37,7 +46,7 @@ public class DBHandler {
 			//Set the success flag
 			successFlag = true;
 		}catch(Exception ex){
-			
+			_log.warning("storeData: " + ex.getMessage());
 			successFlag = false;
 		}
 		
@@ -63,7 +72,8 @@ public class DBHandler {
 								
 			//Fill the data
 			dataToFill = dataToFill.getData(datas);			
-		}catch(Exception ex){			
+		}catch(Exception ex){		
+			_log.warning("getData1: " + ex.getMessage());
 			dataToFill = null;
 		}
 		
@@ -88,7 +98,8 @@ public class DBHandler {
 								
 			//Fill the data
 			dataToFill = dataToFill.getData(datas);			
-		}catch(Exception ex){			
+		}catch(Exception ex){		
+			_log.warning("getData2: " + ex.getMessage());
 			dataToFill = null;
 		}
 		
